@@ -9,49 +9,8 @@ import SwiftUI
 
 struct ContentView: View {
     
-    @State var companyList = companies
-    @State private var searchText = ""
-    @State var searching = false
-    
     var body: some View {
-        
-        
-        
-        NavigationView {
-            
-            VStack(alignment: .leading) {
-                
-                Search(searchText: $searchText, searching: $searching)
-                
-                List {
-                     ForEach(companyList.filter({ (company: Company) -> Bool in
-                        return company.id.hasPrefix(searchText) || searchText == ""
-                     }), id: \.self) { company in
-                        NavigationLink(destination: CompanyDetail(company: company, companyList: $companyList), label: {
-                                CompanyRow(company: company)
-                        })
-                     }
-                 }.listStyle(GroupedListStyle())
-                .navigationTitle(searching ? "Searching" : "Companies")
-                .toolbar {
-                             if searching {
-                                 Button("Cancel") {
-                                     searchText = ""
-                                     withAnimation {
-                                         searching = false
-                                        UIApplication.shared.dismissKeyboard()
-                                     }
-                                 }
-                             }
-                         }
-                .gesture(DragGesture()
-                            .onChanged({ _ in
-                                UIApplication.shared.dismissKeyboard()
-                            })
-                )
-            }
-
-        }
+        Grid()
     }
 }
 
@@ -77,7 +36,7 @@ struct Search: View {
                     }
                 }
             }
-            .foregroundColor(.gray)
+            .foregroundColor(.black)
             .padding(.leading, 13)
         }
         .frame(height: 40)
@@ -91,26 +50,6 @@ extension UIApplication {
           sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
       }
   }
- 
-
-struct CompanyRow: View {
-    
-    var company: Company
-    
-    var body: some View {
-        VStack(alignment: .leading, content: {
-            Text(company.id)
-                .fontWeight(.bold)
-                .font(.title2)
-                .accentColor(.black)
-            Text(company.headline)
-                .fontWeight(.light)
-                .font(.footnote)
-                .foregroundColor(.gray)
-        })
-        
-    }
-}
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
